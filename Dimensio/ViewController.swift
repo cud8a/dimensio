@@ -21,9 +21,18 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         tableView.register(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "gonzo")
         tableView.estimatedRowHeight = 100.0
+        
+        let avc = AnotherViewController()
+        avc.delegate = self
+        avc.doSomething()
+        addChildViewController(avc)
     }
     
     @IBAction func ctaClick(_ sender: Any) {
+        replaceRow()
+    }
+    
+    fileprivate func replaceRow() {
         let copy = texts[2]
         texts[2] = replaceWith
         replaceWith = copy
@@ -40,7 +49,7 @@ extension ViewController: UITableViewDataSource {
         let cellIdentifier = "gonzo"
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier) as? TableViewCell else {return UITableViewCell()}
         
-        cell.label.text = texts[indexPath.row]
+        cell.label.text = texts[safeIndex: indexPath.row]
         
         return cell
     }
@@ -49,5 +58,11 @@ extension ViewController: UITableViewDataSource {
 extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableViewAutomaticDimension
+    }
+}
+
+extension ViewController: AnotherViewControllerDelegate {
+    func anotherViewControllerDoSomthing(_ controller: AnotherViewController) {
+        replaceRow()
     }
 }
